@@ -29,7 +29,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="logo-icon"><i class="ri-leaf-line"></i></div>
-      <span class="logo-text">SmartFarm</span>
+      <span class="logo-text">Farmify</span>
     </div>
 
     <nav class="sidebar-nav">
@@ -89,7 +89,7 @@
           <i class="ri-menu-line"></i>
         </button>
         <span class="breadcrumb-item">
-          <i class="ri-leaf-line"></i> SmartFarm
+          <i class="ri-leaf-line"></i> Farmify
         </span>
         <span class="breadcrumb-sep"><i class="ri-arrow-right-s-line"></i></span>
         <span class="breadcrumb-item active">@yield('breadcrumb', 'Overview')</span>

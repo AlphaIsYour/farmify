@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('refresh-devices').addEventListener('click', () => {
-    TopBar.refresh(() => new Promise(r => setTimeout(() => { window.location.reload(); r(); }, 3000)));
+    TopBar.refresh(() => new Promise(r => setTimeout(() => { window.location.reload(); r(); }, 1000)));
   });
 });
 </script>

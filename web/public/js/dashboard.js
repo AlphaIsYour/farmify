@@ -131,7 +131,7 @@ const TopBar = {
             } finally {
                 this.finish();
             }
-        }, 3000);
+        }, 1000);
     },
 };
 

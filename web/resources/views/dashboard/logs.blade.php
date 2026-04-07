@@ -12,7 +12,7 @@
     <h1 class="page-title">Activity Log</h1>
     <p class="page-subtitle">Complete system event history</p>
   </div>
-  <button class="btn btn-ghost" onclick="TopBar.refresh(() => new Promise(r => setTimeout(() => { window.location.reload(); r(); }, 3000)))">
+  <button class="btn btn-ghost" onclick="TopBar.refresh(() => new Promise(r => setTimeout(() => { window.location.reload(); r(); }, 1000)))">
     <i class="ri-refresh-line"></i> Refresh
   </button>
 </div>
