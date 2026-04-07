@@ -10,7 +10,7 @@
     <h1 class="page-title">System Overview</h1>
     <p class="page-subtitle">Real-time monitoring — last updated <span id="last-updated">just now</span></p>
   </div>
-  <button class="btn btn-primary" id="refresh-btn">
+  <button class="btn btn-ghost" id="refresh-btn">
     <i class="ri-refresh-line"></i> Refresh
   </button>
 </div>
@@ -140,17 +140,26 @@
       <span class="card-title">Command Distribution</span>
     </div>
     <div class="card-body" style="display:flex;align-items:center;gap:20px">
-      <div class="chart-canvas-wrap" style="height:160px;width:160px;flex-shrink:0">
+      <div style="position:relative;height:160px;width:160px;flex-shrink:0">
         <canvas id="status-doughnut"></canvas>
+        <div style="padding-bottom:40px;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+          <div style="font-family:var(--font-h);font-size:1.375rem;font-weight:600;color:var(--text-1);line-height:1" id="donut-total">—</div>
+          <div style="font-size:0.625rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px">Total</div>
+        </div>
       </div>
       <div style="flex:1">
-        <div style="display:flex;flex-direction:column;gap:8px">
-          @foreach([['Done','var(--primary)'],['Pending','var(--accent)'],['Failed','var(--danger)']] as [$label,$color])
+        <div style="display:flex;flex-direction:column;gap:10px">
+          @foreach([['Done','var(--primary)','cmdDist','done'],['Pending','var(--accent)','cmdDist','pending'],['Failed','var(--danger)','cmdDist','failed']] as [$label,$color,$src,$key])
           <div style="display:flex;align-items:center;gap:8px">
             <div style="width:8px;height:8px;border-radius:50%;background:{{ $color }};flex-shrink:0"></div>
             <span style="font-size:0.75rem;color:var(--text-2);flex:1">{{ $label }}</span>
+            <span style="font-family:var(--font-h);font-size:0.8125rem;font-weight:600;color:var(--text-1)" id="donut-val-{{ strtolower($label) }}">—</span>
           </div>
           @endforeach
+        </div>
+        <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border-3)">
+          <div style="font-size:0.6875rem;color:var(--text-3)">Success rate</div>
+          <div style="font-family:var(--font-h);font-size:1rem;font-weight:600;color:var(--success)" id="donut-rate">—</div>
         </div>
       </div>
     </div>
@@ -255,25 +264,81 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Moisture trend chart
-  const labels = @json($chartData['labels']);
+  // ── Moisture trend chart ─────────────────────────────────
+  const labels   = @json($chartData['labels']);
   const datasets = @json($chartData['datasets']);
-  const mc = buildMoistureChart('moisture-chart', labels, datasets);
+
+  // Build smoother datasets: tension 0.45, no dots, soft area fill
+  const zoneColors = ['#2d6a4f', '#52b788', '#1f618d'];
+  const smoothDatasets = datasets.map((ds, i) => ({
+    ...ds,
+    tension: 0.45,
+    pointRadius: 0,
+    pointHoverRadius: 4,
+    borderWidth: 2,
+    fill: true,
+    backgroundColor: `${zoneColors[i] ?? zoneColors[0]}18`,
+    borderColor: zoneColors[i] ?? zoneColors[0],
+  }));
+
+  // Threshold annotation line (dashed red at 40%)
+  const thresholdPlugin = {
+    id: 'thresholdLine',
+    afterDraw(chart) {
+      const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+      if (!y) return;
+      const yPx = y.getPixelForValue(40);
+      ctx.save();
+      ctx.strokeStyle = '#b03a2e';
+      ctx.lineWidth   = 1.5;
+      ctx.setLineDash([5, 4]);
+      ctx.globalAlpha = 0.55;
+      ctx.beginPath();
+      ctx.moveTo(left, yPx);
+      ctx.lineTo(right, yPx);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  const mc = buildMoistureChart('moisture-chart', labels, smoothDatasets, [thresholdPlugin]);
   window._charts = [mc];
 
-  // Commands bar chart
-  const bc = buildCommandsChart('cmd-bar-chart', @json($cmdChart['labels']), @json($cmdChart['data']));
+  // ── Commands bar chart ───────────────────────────────────
+  const barData   = @json($cmdChart['data']);
+  const barLabels = @json($cmdChart['labels']);
+  const maxVal    = Math.max(...barData);
+  const barColors = barData.map(v =>
+    v === maxVal ? '#2d6a4f' : 'rgba(45,106,79,0.18)'
+  );
+  const bc = buildCommandsChart('cmd-bar-chart', barLabels, barData, barColors);
   window._charts.push(bc);
 
-  // Status doughnut
+  // ── Status doughnut ──────────────────────────────────────
+  const distData   = @json($cmdDist['data']);
+  const distLabels = @json($cmdDist['labels']);
   const dc = buildStatusChart('status-doughnut',
-    @json($cmdDist['data']),
-    @json($cmdDist['labels']),
+    distData,
+    distLabels,
     ['#2D6A4F', '#F4C430', '#B03A2E']
   );
   window._charts.push(dc);
 
-  // Chart range selector
+  // Populate legend values + total + success rate
+  const total = distData.reduce((a, b) => a + b, 0);
+  document.getElementById('donut-total').textContent = total;
+  const labelMap = { done: 0, pending: 1, failed: 2 };
+  for (const [key, idx] of Object.entries(labelMap)) {
+    const el = document.getElementById(`donut-val-${key}`);
+    if (el) el.textContent = distData[idx] ?? 0;
+  }
+  const rateEl = document.getElementById('donut-rate');
+  if (rateEl) {
+    const rate = total > 0 ? ((distData[0] / total) * 100).toFixed(1) : '0.0';
+    rateEl.textContent = `${rate}%`;
+  }
+
+  // ── Chart range selector ─────────────────────────────────
   document.getElementById('chart-range').addEventListener('change', function() {
     TopBar.refresh(async () => {
       const res = await fetch(`/dashboard/chart-data?range=${this.value}`, {
@@ -287,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Manual refresh
+  // ── Manual refresh ───────────────────────────────────────
   document.getElementById('refresh-btn').addEventListener('click', () => {
     TopBar.refresh(async () => {
       await new Promise(r => setTimeout(r, 1000));
@@ -295,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Auto-poll device statuses every 15s
+  // ── Auto-poll device statuses every 15s ──────────────────
   new DataPoller('/dashboard/api/devices', data => {
     const offlineCount = data.filter(d => d.status === 'offline').length;
     const badge = document.getElementById('sb-offline-count');

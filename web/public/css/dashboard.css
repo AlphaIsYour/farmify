@@ -818,6 +818,16 @@ html.dark .stat-card {
 .chart-canvas-wrap {
     position: relative;
 }
+/* Donut center label overlay */
+.donut-center-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
 .chart-legend {
     display: flex;
     flex-wrap: wrap;
