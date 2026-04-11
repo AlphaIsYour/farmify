@@ -4,7 +4,6 @@
 
 @section('content')
 
-{{-- Page header --}}
 <div class="page-header flex-between">
   <div>
     <h1 class="page-title">System Overview</h1>
@@ -15,7 +14,6 @@
   </button>
 </div>
 
-{{-- Stat cards --}}
 <div class="stat-grid" id="stat-grid">
   <div class="stat-card" style="--stat-color:var(--primary);--stat-bg:var(--primary-pale)">
     <div class="stat-icon"><i class="ri-cpu-line"></i></div>
@@ -62,10 +60,8 @@
   </div>
 </div>
 
-{{-- Row 1: moisture chart + device status --}}
 <div class="grid-2-1 row-gap">
 
-  {{-- Moisture trend chart --}}
   <div class="card">
     <div class="card-header">
       <i class="ri-line-chart-line" style="color:var(--primary)"></i>
@@ -118,7 +114,6 @@
   </div>
 </div>
 
-{{-- Row 2: commands bar chart + command distribution doughnut --}}
 <div class="grid-1-1 row-gap">
 
   <div class="card">
@@ -166,10 +161,8 @@
   </div>
 </div>
 
-{{-- Row 3: recent commands + activity log --}}
 <div class="grid-1-1 row-gap">
 
-  {{-- Recent commands --}}
   <div class="card">
     <div class="card-header">
       <i class="ri-remote-control-line" style="color:var(--primary)"></i>
@@ -219,7 +212,6 @@
     </div>
   </div>
 
-  {{-- Activity log --}}
   <div class="card">
     <div class="card-header">
       <i class="ri-file-list-3-line" style="color:var(--primary)"></i>
@@ -264,11 +256,9 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // ── Moisture trend chart ─────────────────────────────────
   const labels   = @json($chartData['labels']);
   const datasets = @json($chartData['datasets']);
 
-  // Build smoother datasets: tension 0.45, no dots, soft area fill
   const zoneColors = ['#2d6a4f', '#52b788', '#1f618d'];
   const smoothDatasets = datasets.map((ds, i) => ({
     ...ds,
@@ -281,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
     borderColor: zoneColors[i] ?? zoneColors[0],
   }));
 
-  // Threshold annotation line (dashed red at 40%)
   const thresholdPlugin = {
     id: 'thresholdLine',
     afterDraw(chart) {
@@ -304,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mc = buildMoistureChart('moisture-chart', labels, smoothDatasets, [thresholdPlugin]);
   window._charts = [mc];
 
-  // ── Commands bar chart ───────────────────────────────────
   const barData   = @json($cmdChart['data']);
   const barLabels = @json($cmdChart['labels']);
   const maxVal    = Math.max(...barData);
@@ -314,7 +302,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const bc = buildCommandsChart('cmd-bar-chart', barLabels, barData, barColors);
   window._charts.push(bc);
 
-  // ── Status doughnut ──────────────────────────────────────
   const distData   = @json($cmdDist['data']);
   const distLabels = @json($cmdDist['labels']);
   const dc = buildStatusChart('status-doughnut',
@@ -324,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
   );
   window._charts.push(dc);
 
-  // Populate legend values + total + success rate
   const total = distData.reduce((a, b) => a + b, 0);
   document.getElementById('donut-total').textContent = total;
   const labelMap = { done: 0, pending: 1, failed: 2 };
@@ -338,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
     rateEl.textContent = `${rate}%`;
   }
 
-  // ── Chart range selector ─────────────────────────────────
   document.getElementById('chart-range').addEventListener('change', function() {
     TopBar.refresh(async () => {
       const res = await fetch(`/dashboard/chart-data?range=${this.value}`, {
@@ -352,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Manual refresh ───────────────────────────────────────
   document.getElementById('refresh-btn').addEventListener('click', () => {
     TopBar.refresh(async () => {
       await new Promise(r => setTimeout(r, 1000));
@@ -360,7 +344,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Auto-poll device statuses every 15s ──────────────────
   new DataPoller('/dashboard/api/devices', data => {
     const offlineCount = data.filter(d => d.status === 'offline').length;
     const badge = document.getElementById('sb-offline-count');

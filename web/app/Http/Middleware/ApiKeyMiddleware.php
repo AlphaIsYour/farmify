@@ -32,9 +32,3 @@ class ApiKeyMiddleware
         return $next($request);
     }
 }
-
-// ─────────────────────────────────────────────────────────────
-// Daftarkan di bootstrap/app.php:
-// ->withMiddleware(function (Middleware $middleware) {
-//     $middleware->alias(['auth.apikey' => ApiKeyMiddleware::class]);
-// })

@@ -1,7 +1,4 @@
 <?php
-// ══════════════════════════════════════════════════════════════
-// app/Http/Controllers/Api/CommandController.php
-// ══════════════════════════════════════════════════════════════
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +9,6 @@ use Illuminate\Http\Request;
 
 class CommandController extends Controller
 {
-    // POST /api/command/send
-    // Body: { device_id, command_type }
     public function send(Request $request): JsonResponse
     {
         $data = $request->validate([

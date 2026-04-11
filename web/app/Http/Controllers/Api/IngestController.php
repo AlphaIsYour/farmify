@@ -1,7 +1,4 @@
 <?php
-// ══════════════════════════════════════════════════════════════
-// app/Http/Controllers/Api/IngestController.php
-// ══════════════════════════════════════════════════════════════
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -14,8 +11,6 @@ use Illuminate\Http\Request;
 
 class IngestController extends Controller
 {
-    // POST /api/ingest
-    // Body: { device_code, soil_moisture, temperature?, humidity? }
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -45,16 +40,13 @@ class IngestController extends Controller
             'humidity'      => $data['humidity'] ?? null,
         ]);
 
-        // Pastikan pump_status row tersedia
         PumpStatus::firstOrCreate(['device_id' => $device->id]);
 
-        // Auto-command: jika kelembapan < 30% → kirim start_pump otomatis
         $this->checkAutoIrigation($device, $data['soil_moisture'], $client);
 
         return response()->json(['message' => 'Data ingested', 'id' => $sensor->id], 201);
     }
-
-    // GET /api/devices
+    
     public function index(): JsonResponse
     {
         $devices = Device::with(['latestSensor', 'pumpStatus'])->get();

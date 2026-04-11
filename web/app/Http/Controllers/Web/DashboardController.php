@@ -14,7 +14,6 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    // ── Overview ─────────────────────────────────────────────
     public function index(): View
     {
         $devices = Device::with(['latestSensor', 'pumpStatus'])->get();
@@ -34,10 +33,7 @@ class DashboardController extends Controller
             'commands_success' => Command::whereDate('created_at', today())->where('status', 'done')->count(),
         ];
 
-        // Moisture trend chart (last 6 hours, every 30 min)
         $chartData = $this->moistureChartData('6h');
-
-        // Commands bar chart (last 7 days)
         $cmdChart = [
             'labels' => collect(range(6, 0))->map(fn($i) => now()->subDays($i)->format('d M'))->toArray(),
             'data'   => collect(range(6, 0))->map(fn($i) =>
@@ -45,7 +41,6 @@ class DashboardController extends Controller
             )->toArray(),
         ];
 
-        // Command distribution doughnut
         $cmdDist = [
             'labels' => ['Done', 'Pending', 'Failed'],
             'data'   => [
@@ -61,7 +56,6 @@ class DashboardController extends Controller
         return view('dashboard.index', compact('devices', 'stats', 'chartData', 'cmdChart', 'cmdDist', 'recentCommands', 'recentLogs'));
     }
 
-    // ── Devices ───────────────────────────────────────────────
     public function devices(): View
     {
         $devices = Device::with(['latestSensor', 'pumpStatus'])->paginate(20);
@@ -76,7 +70,6 @@ class DashboardController extends Controller
             'location'    => 'nullable|string',
         ]);
 
-        // Use first api_client as owner (adjust per your auth logic)
         $client = \App\Models\ApiClient::first();
         $data['api_client_id'] = $client?->id ?? 1;
 
@@ -86,7 +79,6 @@ class DashboardController extends Controller
         return redirect()->route('dashboard.devices')->with('success', 'Device added successfully.');
     }
 
-    // ── Commands ──────────────────────────────────────────────
     public function commands(Request $request): View
     {
         $query = Command::with('device')->latest('created_at');
@@ -108,7 +100,6 @@ class DashboardController extends Controller
         return view('dashboard.commands', compact('commands', 'devices', 'cmdStats'));
     }
 
-    // ── Logs ──────────────────────────────────────────────────
     public function logs(Request $request): View
     {
         $query = ActivityLog::with(['device', 'command'])->latest('created_at');
@@ -128,7 +119,6 @@ class DashboardController extends Controller
         return view('dashboard.logs', compact('logs', 'devices', 'logStats'));
     }
 
-    // ── AJAX: Send command from dashboard ─────────────────────
     public function sendCommand(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -154,13 +144,11 @@ class DashboardController extends Controller
         return response()->json(['message' => 'Command queued', 'command_id' => $cmd->id], 201);
     }
 
-    // ── AJAX: Chart data by range ─────────────────────────────
     public function chartData(Request $request): JsonResponse
     {
         return response()->json($this->moistureChartData($request->get('range', '6h')));
     }
 
-    // ── AJAX: Device statuses for polling ─────────────────────
     public function deviceStatuses(): JsonResponse
     {
         return response()->json(
@@ -175,7 +163,6 @@ class DashboardController extends Controller
         );
     }
 
-    // ── Helper: build moisture chart data ─────────────────────
     private function moistureChartData(string $range): array
     {
         [$hours, $step, $format] = match($range) {

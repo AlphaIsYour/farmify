@@ -4,7 +4,6 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\SettingsController;
 use Illuminate\Support\Facades\Route;
 
-// Redirect root ke dashboard
 Route::redirect('/', '/dashboard');
 
 Route::prefix('dashboard')->name('dashboard.')->group(function () {

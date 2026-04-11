@@ -1,7 +1,4 @@
 <?php
-// ══════════════════════════════════════════════════════════════
-// app/Http/Controllers/Api/StatusController.php
-// ══════════════════════════════════════════════════════════════
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -12,8 +9,6 @@ use Illuminate\Http\Request;
 
 class StatusController extends Controller
 {
-    // POST /api/status/update
-    // Body: { device_id, status, command_id? }
     public function update(Request $request): JsonResponse
     {
         $data = $request->validate([

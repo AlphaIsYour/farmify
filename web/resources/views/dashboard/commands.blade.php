@@ -1,6 +1,3 @@
-{{-- ═══════════════════════════════════════════════════════════
-     commands.blade.php
-════════════════════════════════════════════════════════════ --}}
 @extends('layouts.app')
 @section('title', 'Commands')
 @section('breadcrumb', 'Commands')
@@ -17,7 +14,6 @@
   </button>
 </div>
 
-{{-- Filter --}}
 <div class="card row-gap" style="padding:14px 18px">
   <div class="filter-row">
     <select class="form-select" style="width:150px" id="f-device">
@@ -48,7 +44,6 @@
   </div>
 </div>
 
-{{-- Stats row --}}
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" class="row-gap">
   @foreach([
     ['Done',       $cmdStats['done'],       'badge-success', 'ri-check-double-line'],
@@ -68,7 +63,6 @@
   @endforeach
 </div>
 
-{{-- Table --}}
 <div class="card">
   <div class="card-header">
     <i class="ri-remote-control-line" style="color:var(--primary)"></i>
@@ -198,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
     Toast.show('success', 'Success', '{{ session('success') }}');
   @endif
 
-  // Cmd option highlight
   document.querySelectorAll('.cmd-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.cmd-option').forEach(o => {

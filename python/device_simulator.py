@@ -11,10 +11,9 @@ import random
 import logging
 from datetime import datetime
 
-# ── Konfigurasi ──────────────────────────────────────────────
-API_BASE_URL = "http://localhost:8000/api"   # Ganti dengan IP server Laravel
-API_KEY      = "smartfarm-secret-key-2024"          # Ganti dengan API key dari tabel api_clients
-INTERVAL     = 10                           # Detik antar pengiriman data
+API_BASE_URL = "http://localhost:8000/api"   
+API_KEY      = "smartfarm-secret-key-2024"          
+INTERVAL     = 10
 
 HEADERS = {
     "Content-Type": "application/json",

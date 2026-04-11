@@ -1,7 +1,4 @@
-
-// ══════════════════════════════════════════════════════════════
-// app/Http/Controllers/Api/DashboardController.php
-// ══════════════════════════════════════════════════════════════
+<?php
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -11,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 
 class DashboardController extends Controller
 {
-    // GET /api/dashboard/data
     public function data(): JsonResponse
     {
         $devices = Device::with(['latestSensor', 'pumpStatus'])->get()
@@ -28,7 +24,6 @@ class DashboardController extends Controller
         return response()->json($devices);
     }
 
-    // GET /api/dashboard/log
     public function log(): JsonResponse
     {
         $logs = ActivityLog::with('device')

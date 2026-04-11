@@ -1,6 +1,3 @@
-{{-- ═══════════════════════════════════════════════════════════
-     logs.blade.php
-════════════════════════════════════════════════════════════ --}}
 @extends('layouts.app')
 @section('title', 'Activity Log')
 @section('breadcrumb', 'Activity Log')
@@ -17,7 +14,6 @@
   </button>
 </div>
 
-{{-- Filters --}}
 <div class="card row-gap" style="padding:14px 18px">
   <div class="filter-row">
     <select class="form-select" style="width:150px" id="f-device">
@@ -40,7 +36,6 @@
   </div>
 </div>
 
-{{-- Stats --}}
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px" class="row-gap">
   @foreach([
     ['Total Events', $logStats['total'],   'ri-list-check-3', 'var(--info)'],
@@ -57,7 +52,6 @@
   @endforeach
 </div>
 
-{{-- Timeline --}}
 <div class="card">
   <div class="card-header">
     <i class="ri-timeline-view" style="color:var(--primary)"></i>

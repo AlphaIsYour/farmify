@@ -6,26 +6,19 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title', 'Dashboard') — Smart Farming</title>
 
-  {{-- Icons + Fonts --}}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css">
   <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
   @stack('styles')
 </head>
 <body>
 
-{{-- Top loading bar --}}
 <div id="nprogress"><div class="bar" id="topbar-bar"></div></div>
-
-{{-- Toast container --}}
 <div class="toast-container" id="toast-container"></div>
 
-{{-- App shell --}}
 <div class="app-shell">
 
-  {{-- Mobile sidebar backdrop --}}
   <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-  {{-- Sidebar --}}
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="logo-icon"><i class="ri-leaf-line"></i></div>
@@ -79,10 +72,8 @@
     </div>
   </aside>
 
-  {{-- Main area --}}
   <div class="main-area">
 
-    {{-- Topbar --}}
     <header class="topbar">
       <nav class="topbar-breadcrumb">
         <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu">
@@ -96,24 +87,20 @@
       </nav>
 
       <div class="topbar-actions">
-        {{-- Search --}}
         <div class="topbar-search">
           <i class="ri-search-line"></i>
           <input type="text" placeholder="Search..." id="global-search">
         </div>
 
-        {{-- Language --}}
         <button class="lang-chip" id="lang-toggle" data-tip="Switch language">
           <i class="ri-translate-2"></i>
           <span data-lang-label>EN</span>
         </button>
 
-        {{-- Dark mode --}}
         <button class="icon-btn" id="theme-toggle" data-tip="Toggle theme">
           <i data-theme-icon class="ri-moon-line"></i>
         </button>
 
-        {{-- Notifications --}}
         <div class="dropdown" style="position:relative">
           <button class="icon-btn" id="notif-btn" data-tip="Notifications">
             <i class="ri-notification-3-line"></i>
@@ -151,28 +138,22 @@
           </div>
         </div>
 
-        {{-- Avatar --}}
         <div class="topbar-avatar" data-tip="Admin">AD</div>
       </div>
 
-      {{-- Topbar progress --}}
       <div class="topbar-progress">
         <div class="topbar-progress-bar" id="topbar-bar"></div>
       </div>
     </header>
-
-    {{-- Content --}}
     <main class="content-area">
       @yield('content')
     </main>
 
-  </div>{{-- .main-area --}}
-</div>{{-- .app-shell --}}
+  </div>
+</div>
 
-{{-- Global modals go here --}}
 @stack('modals')
 
-{{-- Scripts --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="{{ asset('js/dashboard.js') }}"></script>
 @stack('scripts')

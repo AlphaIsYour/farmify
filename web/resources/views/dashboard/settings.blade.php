@@ -9,7 +9,6 @@
   <p class="page-subtitle">System configuration and API key management</p>
 </div>
 
-{{-- Alert success/error --}}
 @if(session('success'))
 <script>document.addEventListener('DOMContentLoaded',()=>Toast.show('success','Saved','{{ session('success') }}'))</script>
 @endif
@@ -18,11 +17,7 @@
 @endif
 
 <div class="grid-2-1" style="align-items:start">
-
-  {{-- LEFT COLUMN --}}
   <div style="display:flex;flex-direction:column;gap:16px">
-
-    {{-- Irrigation Threshold --}}
     <div class="card">
       <div class="card-header">
         <i class="ri-drop-line" style="color:var(--primary)"></i>
@@ -78,7 +73,6 @@
       </form>
     </div>
 
-    {{-- Worker Settings --}}
     <div class="card">
       <div class="card-header">
         <i class="ri-settings-4-line" style="color:var(--primary)"></i>
@@ -124,7 +118,6 @@
       </form>
     </div>
 
-    {{-- Dashboard Settings --}}
     <div class="card">
       <div class="card-header">
         <i class="ri-layout-3-line" style="color:var(--primary)"></i>
@@ -174,10 +167,8 @@
 
   </div>
 
-  {{-- RIGHT COLUMN --}}
   <div style="display:flex;flex-direction:column;gap:16px">
 
-    {{-- API Key Management --}}
     <div class="card">
       <div class="card-header">
         <i class="ri-key-2-line" style="color:var(--primary)"></i>
@@ -252,7 +243,6 @@
       </div>
     </div>
 
-    {{-- System Info --}}
     <div class="card">
       <div class="card-header">
         <i class="ri-information-line" style="color:var(--primary)"></i>
@@ -277,7 +267,6 @@
       </div>
     </div>
 
-    {{-- Danger zone --}}
     <div class="card" style="border-color:var(--danger-lt)">
       <div class="card-header" style="background:var(--danger-bg)">
         <i class="ri-alert-line" style="color:var(--danger)"></i>
@@ -312,7 +301,6 @@
 @endsection
 
 @push('modals')
-{{-- Add API Key --}}
 <div class="modal-overlay" id="modal-add-key">
   <div class="modal">
     <div class="modal-header">
@@ -340,7 +328,6 @@
   </div>
 </div>
 
-{{-- Clear sensor data confirm --}}
 <div class="modal-overlay" id="modal-clear-sensor">
   <div class="modal">
     <div class="modal-header">
@@ -361,7 +348,6 @@
   </div>
 </div>
 
-{{-- Clear log confirm --}}
 <div class="modal-overlay" id="modal-clear-log">
   <div class="modal">
     <div class="modal-header">
